@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YOURTITLE</title>
+
+<style>
+  :root {
+    --bg: #0b0f1a;
+    --card: #121826;
+    --blue: #3b82f6;
+    --light-blue: #60a5fa;
+    --text: #d1d5db;
+    --muted: #9ca3af;
+    --radius: 16px;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .profile {
+    background: var(--card);
+    padding: 40px 30px;
+    border-radius: var(--radius);
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    border: 3px solid var(--blue);
+    object-fit: cover;
+  }
+
+  .name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--light-blue);
+    margin-bottom: 5px;
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px 12px;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    margin-bottom: 1.5em;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .socials {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  a {
+    text-decoration: none;
+    color: var(--light-blue);
+    background: rgba(59, 130, 246, 0.08);
+    padding: 10px 14px;
+    border-radius: 10px;
+    transition: background 0.15s, transform 0.15s;
+  }
+
+  a:hover {
+    background: rgba(59, 130, 246, 0.2);
+    transform: translateY(-2px);
+  }
+
+  footer {
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  iframe {
+    border-radius: 12px;
+    margin-top: 15px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Your socials -->
+<div class="profile">
+  <img id="avatar" class="avatar" src="" alt="Discord Avatar">
+  <div class="name" id="username">m1lk1x</div>
+  <div id="discord-status" class="status">
+    <span class="dot" id="status-dot"></span>
+    <span id="status-text">Loading...</span>
+  </div>
+
+  <div class="socials">
+    <a href="https://tiktok.com/@m1lk1x00" target="_blank">tiktok.com/@m1lk1x00</a>
+    <a href="https://x.com/m1lk1x" target="_blank">x.com/m1lk1x</a>
+    <a href="https://youtube.com/@m1lk1x" target="_blank">youtube.com/@m1lk1x</a>
+    <a href="https://twitch.tv/m1lk1x" target="_blank">twitch.tv/m1lk1x</a>
+    <a href="https://discord.com/users/1409669464898932878" target="_blank">discord.com/users/m1lk1x</a>
+  </div>
+
+  <!-- Spotify Embed -->
+  <iframe 
+    style="border-radius:12px" 
+    src="https://open.spotify.com/embed/track/15JRvf02KKGHKgC31jrpuh?utm_source=generator" 
+    width="100%" height="80" frameBorder="0" allowfullscreen="" 
+    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+    loading="lazy">
+  </iframe>
+
+  <footer>© <span id="year"></span> m1lk1x dojo</footer>
+</div>
+
+<!-- Background Music -->
+<audio id="bg-music" autoplay loop muted>
+  <source src="yourmusic.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
+<!-- JOIN LANYARD DISCORD AND PUT IN DISCORD ID -->
+<script>
+const userId = "1409669464898932878";
+
+async function fetchDiscord() {
+  try {
+    const res = await fetch(`https://api.lanyard.rest/v1/users/${userId}`);
+    const data = await res.json();
+    if (!data.success) throw new Error("User not found");
+
+    const user = data.data.discord_user;
+    const status = data.data.discord_status;
+
+    // Set avatar and username
+    const avatarURL = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=512`;
+    document.getElementById("avatar").src = avatarURL;
+    document.getElementById("username").textContent = user.username;
+
+    // Set status
+    const dot = document.getElementById("status-dot");
+    const text = document.getElementById("status-text");
+    const colors = {
+      online: "#22c55e",
+      idle: "#eab308",
+      dnd: "#ef4444",
+      offline: "#6b7280"
+    };
+    dot.style.background = colors[status] || colors.offline;
+    text.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+  } catch (err) {
+    document.getElementById("status-text").textContent = "Offline";
+    document.getElementById("status-dot").style.background = "#6b7280";
+  }
+}
+
+fetchDiscord();
+setInterval(fetchDiscord, 15000);
+document.getElementById("year").textContent = new Date().getFullYear();
+
+// Handle autoplay restrictions
+const bg = document.getElementById("bg-music");
+document.body.addEventListener("click", () => {
+  bg.muted = false; // unmute
+  bg.play();         // play now
+}, { once: true });
+</script>
+
+</body>
+</html>
